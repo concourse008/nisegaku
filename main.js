@@ -5,7 +5,11 @@ const game1Divided = document.getElementById('game-area1');
 let bumex = 215;
 let bumey = 50;
 let bumez = 0;
-let baloon00 = [400, 400, 400, 400, 400]//X値
+let baloon00 = [400, 400, 400, 400, 400, 400, 400]//X値
+let baloon01 = [-30, -30, -30, -30, -30, -30, -30]//X値
+let baloon02 = [400, 400, 400, 400, 400, 400, 400]//X値
+let baloon03 = [-30, -30, -30, -30, -30, -30, -30]//X値
+let baloon04 = [400, 400, 400, 400, 400, 400, 400]//X値
 
 //画像読み込み
 const canvas = {
@@ -61,8 +65,12 @@ function step() {
   ctx0.rotate((bumez * Math.PI) / 180);
   ctx0.drawImage(images[2], -13, -30);
   ctx0.restore();
-  for (let i = 0; i < 5; i++) {
-    ctx.drawImage(images[4], baloon00[i], i * 35 + 220);//風船０
+  for (let i = 0; i < baloon00.length; i++) {
+    ctx.drawImage(images[4], baloon00[i], 220);//風船０
+    ctx.drawImage(images[4], baloon01[i], 250);//風船０
+    ctx.drawImage(images[4], baloon02[i], 280);//風船０
+    ctx.drawImage(images[4], baloon03[i], 310);//風船０
+    ctx.drawImage(images[4], baloon04[i], 340);//風船０
   }
   ctx.drawImage(images[3], srcs[3][1], srcs[3][2]);
 }
@@ -88,13 +96,13 @@ let back = false;
 function role() {
   if (back) {
     bumex = bumex + 0;
-    bumey = bumey - 5;
-    bumez = bumez + 33;
+    bumey = bumey - 6;
+    bumez = bumez + 32;
   } else {
-    bumey = bumey + 5;
-    bumez = bumez + 33;
+    bumey = bumey + 6;
+    bumez = bumez + 32;
   }
-  if (bumey > 400) {
+  if (bumey > 380) {
     back = true;
   } else if (bumey == 50) {
     back = false;
@@ -116,22 +124,106 @@ let lastgo = 0;
 function bal0() {
   for (let i in baloon00) {
     if (baloon00[i] == 400) {
-      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 45) {
+      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 150) {
         baloon00[i] = baloon00[i] - 10;
         lastgo = 0;
       }
-      lastgo++;
-    } else if (baloon00[i] <= -15) {
+    } else if (baloon00[i] <= 0) {
       baloon00[i] = 400;
     } else {
-      baloon00[i] = baloon00[i] - 2;
+      baloon00[i] = baloon00[i] - 3;
     }
+    if ((215-baloon00[i]-17)**2 + (220+12-bumey)**2 <= 1400){//命中範囲
+      baloon00[i] = 400;
+      console.log('hit');//命中処理
+    }
+    lastgo++;
+  }
+}
+function bal1() {
+  for (let i in baloon01) {
+    if (baloon01[i] == -30) {
+      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 150) {
+        baloon01[i] = baloon01[i] + 10;
+        lastgo = 0;
+      }
+    } else if (baloon01[i] >= 400) {
+      baloon01[i] = -30;
+    } else {
+      baloon01[i] = baloon01[i] + 3;
+    }
+    if ((215-baloon01[i]-17)**2 + (250+12-bumey)**2 <= 1400){
+      baloon01[i] = 400;
+      console.log('hit');
+    }
+    lastgo++;
+  }
+}
+function bal2() {
+  for (let i in baloon02) {
+    if (baloon02[i] == 400) {
+      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 150) {
+        baloon02[i] = baloon02[i] - 10;
+        lastgo = 0;
+      }
+    } else if (baloon02[i] <= -20) {
+      baloon02[i] = 400;
+    } else {
+      baloon02[i] = baloon02[i] - 2;
+    }
+    if ((215-baloon02[i]-17)**2 + (280+12-bumey)**2 <= 1400){
+      baloon02[i] = 400;
+      console.log('hit');
+    }
+    lastgo++;
+  }
+}
+function bal3() {
+  for (let i in baloon03) {
+    if (baloon03[i] == -30) {
+      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 150) {
+        baloon03[i] = baloon03[i] + 10;
+        lastgo = 0;
+      }
+    } else if (baloon03[i] >= 400) {
+      baloon03[i] = -30;
+    } else {
+      baloon03[i] = baloon03[i] + 2;
+    }
+    if ((215-baloon03[i]-17)**2 + (310+12-bumey)**2 <= 1400){
+      baloon03[i] = 400;
+      console.log('hit');
+    }
+    lastgo++;
+  }
+}
+function bal4() {
+  for (let i in baloon04) {
+    if (baloon04[i] == 400) {
+      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 300) {
+        baloon04[i] = baloon04[i] - 10;
+        lastgo = 0;
+      }
+    } else if (baloon04[i] <= -20) {
+      baloon04[i] = 400;
+    } else {
+      baloon04[i] = baloon04[i] - 1;
+    }
+    if ((215-baloon04[i]-17)**2 + (340+12-bumey)**2 <= 1400){
+      baloon04[i] = 400;
+      console.log('hit');
+    }
+    lastgo++;
   }
 }
 let balmoveing = 0;
 function baloonstart() {
   function balmove() {
     balmoveing = setInterval(bal0, 1000 / 30);
+    balmoveing = setInterval(bal1, 1000 / 30);
+    balmoveing = setInterval(bal2, 1000 / 30);
+    balmoveing = setInterval(bal3, 1000 / 30);
+    balmoveing = setInterval(bal4, 1000 / 30);
   }
   balmove();
 }
