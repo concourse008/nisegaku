@@ -1,9 +1,11 @@
 'use strict';
 const game0Divided = document.getElementById('game-area0');
 const game1Divided = document.getElementById('game-area1');
+let op = true;
+let result = false;
 //ブーメラン位置
 let bumex = 215;
-let bumey = 50;
+let bumey = 70;
 let bumez = 0;
 let point = 0;
 
@@ -14,7 +16,7 @@ let baloon01 = [-30, -30, -30, -30, -30, -30, -30]//X値
 let baloon02 = [400, 400, 400, 400, 400, 400, 400]//X値
 let baloon03 = [-30, -30, -30, -30, -30, -30, -30]//X値
 let baloon04 = [400, 400, 400, 400, 400, 400, 400]//X値
-let baloontuy = [400, 400, 400, 400, 400, 400, 400]//X値
+let baloontuy = [400, 400, 410, 410, 410, 410, 410]//X値
 let baloonnise = [-30, -30, -30, -30, -30, -30, -30]//X値
 let baloongold = [400, 400, 400, 400, 400, 400, 400]//X値
 
@@ -33,13 +35,15 @@ let ctx = canvas[flip].getContext('2d');
 const ctx0 = canvas[2].getContext('2d');
 const srcs = [//画像一覧
   ['back.png', 0, 0],
-  ['gaku.png', 155, 20],
+  ['gaku.png', 155, 40],
   ['bume.png', bumex, bumey],
   ['front.png', 0, 0],
   ['baloon0.png', 155, 250],
   ['baloontuy.png', 155, 250],
   ['baloonnisetuy.png', 155, 250],
-  ['gold.png', 155,250]
+  ['gold.png', 155, 250],
+  ['reset.png', 0, 0],
+  ['op.png', 0, 0]
 ];
 let images = [];
 for (let i in srcs) {
@@ -51,7 +55,7 @@ for (let i in images) {
   images[i].addEventListener('load', function () {
     if (loadedCount == images.length) {
       for (let j in images) {
-        ctx.drawImage(images[j], srcs[j][1], srcs[j][2]);
+        ctx0.drawImage(images[j], srcs[j][1], srcs[j][2]);
       }
     }
     loadedCount++;
@@ -90,19 +94,26 @@ function step() {
   ctx.lineWidth = 0.5;
   ctx.fillStyle = "#c30";
   ctx.font = "bold 24px sans-serif";
-  ctx.fillText("score: " + point , 250, 395);
+  ctx.fillText("score: " + point, 250, 395);
   ctx.strokeStyle = "#fff";
-  ctx.strokeText("score: " + point , 250, 395);
+  ctx.strokeText("score: " + point, 250, 395);
   //時間表示
   ctx.lineWidth = 1;
   ctx.fillStyle = "#fff";
   ctx.font = "bold 30px sans-serif";
-  ctx.fillText("残り: " + time + " 秒" , 5, 30);
+  ctx.fillText("残り: " + time + " 秒", 5, 30);
   ctx.strokeStyle = "#000";
-  ctx.strokeText("残り: " + time + " 秒" , 5, 30);
-
+  ctx.strokeText("残り: " + time + " 秒", 5, 30);
+  if (result) {
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#900";
+    ctx.font = "bold 40px sans-serif";
+    ctx.fillText("GAME OVER", 70, 150);
+    ctx.strokeStyle = "#fff";
+    ctx.strokeText("GAME OVER", 70, 150);
+    ctx.drawImage(images[8], 125, 180);
+  }
 }
-step();
 //画面の描写
 
 //クリック
@@ -115,7 +126,11 @@ canvas[2].addEventListener('click', e => {
     x: e.clientX - rect.left,
     y: e.clientY - rect.top
   }
-  if (clickok) {
+  if (op) {
+    start();
+  } else if (result && clickpoint.x >= 125 && clickpoint.x <= 275 && clickpoint.y >= 180 && clickpoint.y <= 260) {
+    restart();
+  } else if (clickok) {
     clickok = false;
     rolestart();
   } else { }
@@ -124,21 +139,21 @@ let back = false;
 function role() {
   if (back) {
     bumex = bumex + 0;
-    bumey = bumey - 6;
+    bumey = bumey - 7;
     bumez = bumez + 32;
   } else {
-    bumey = bumey + 6;
+    bumey = bumey + 7;
     bumez = bumez + 32;
   }
   if (bumey > 380) {
     back = true;
-  } else if (bumey == 50) {
+  } else if (bumey == 70) {
     back = false;
     bumez = 0;
     clearInterval(moveing);
-    if (time == 0){
-    }else{
-    clickok = true;
+    if (time <= 0) {
+    } else {
+      clickok = true;
     }
   }
 }
@@ -152,6 +167,9 @@ function rolestart() {
 
 //風船の移動
 let lastgo = 0;
+let lastgold = 0;
+let goldspace = 2000;
+let tuy = 0;
 function bal0() {
   for (let i in baloon00) {
     /*if (baloon00[i] == 410){
@@ -259,9 +277,8 @@ function bal4() {
 }
 function baltuy() {
   for (let i in baloontuy) {
-    /*if (baloon04[i] == 410){
-
-    } else */if (baloontuy[i] == 400) {
+    if (baloontuy[i] == 410) {
+    } else if (baloontuy[i] == 400) {
       if (Math.floor(Math.random() * 30) === 0 && lastgo >= 300) {
         baloontuy[i] = baloontuy[i] - 10;
         lastgo = 0;
@@ -273,7 +290,11 @@ function baltuy() {
     }
     if ((215 - baloontuy[i] - 17) ** 2 + (280 + 12 - bumey) ** 2 <= 1400) {
       baloontuy[i] = 400;
-      time = time - 2;
+      time = time - 4;
+      tuy++
+      if (tuy == 3) {
+        goldspace = 210;
+      }
     }
     lastgo++;
   }
@@ -294,19 +315,18 @@ function balnise() {
     }
     if ((215 - baloonnise[i] - 17) ** 2 + (310 + 12 - bumey) ** 2 <= 1400) {
       baloonnise[i] = -30;
-      time = time +2;
+      time = time + 2;
     }
     lastgo++;
   }
 }
 function balgold() {
   for (let i in baloongold) {
-    /*if (baloon04[i] == 410){
-
-    } else */if (baloongold[i] == 400) {
-      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 300) {
+    if (baloongold[i] == 410) {
+    } else if (baloongold[i] == 400) {
+      if (/*Math.floor(Math.random() * 30) === 0 && */lastgold >= goldspace) {
         baloongold[i] = baloongold[i] - 10;
-        lastgo = 0;
+        lastgold = 0;
       }
     } else if (baloongold[i] <= -20) {
       baloongold[i] = 400;
@@ -315,9 +335,9 @@ function balgold() {
     }
     if ((215 - baloongold[i] - 17) ** 2 + (340 + 12 - bumey) ** 2 <= 1400) {
       baloongold[i] = 400;
-      point = point + 20;
+      point = point + 10;
     }
-    lastgo++;
+    lastgold++;
   }
 }
 function times() {
@@ -325,10 +345,12 @@ function times() {
   if (timecount == 30) {
     time = time - 1;
     timecount = 0;
-    console.log(time + ':' + point);
-    if (time <= 0){
+    if (time <= 0) {
       time = 0;
-      clearInterval(times);
+      if (bumey == 70) {
+        bumey = 71;
+        end();
+      }
     }
   }
 }
@@ -347,4 +369,54 @@ function baloonstart() {
   }
   balmove();
 }
-baloonstart();
+function start() {
+  op = false;
+  step();
+  baloonstart();
+}
+function end() {
+  clickok = false;
+  result = true;
+  //tweet();
+}
+function restart() {
+  result = false;
+  clickok = true;
+  bumey = 70;
+  bumez = 0;
+  point = 0;
+  time = 30;
+  timecount = 0;
+  baloon00 = [400, 400, 400, 400, 400, 400, 400]//X値
+  baloon01 = [-30, -30, -30, -30, -30, -30, -30]//X値
+  baloon02 = [400, 400, 400, 400, 400, 400, 400]//X値
+  baloon03 = [-30, -30, -30, -30, -30, -30, -30]//X値
+  baloon04 = [400, 400, 400, 400, 400, 400, 400]//X値
+  baloontuy = [400, 400, 410, 410, 410, 410, 410]//X値
+  baloonnise = [-30, -30, -30, -30, -30, -30, -30]//X値
+  baloongold = [400, 400, 400, 400, 400, 400, 400]//
+  lastgo = 0;
+  lastgold = 0;
+  goldspace = 2000;
+  tuy = 0;
+}
+
+//ツイートボタン
+const tweetDivided = document.getElementById('tweet-area');
+function tweet() {
+  while (tweetDivided.firstChild) {
+    tweetDivided.removeChild(tweetDivided.firstChild);
+  }
+  const anchor = document.createElement('a');
+  const hrefValue = 'https://twitter.com/intent/tweet?button_hashtag=' + encodeURIComponent('にせガクブーメラン') + '&ref_src=twsrc%5Etfw';
+  anchor.setAttribute('herf', hrefValue);
+  anchor.className = 'twitter-hashtag-button';
+  anchor.setAttribute('data-text', 'ブーメランを使い、' + point + 'ポイントの風船を撃墜した。悪い心を持つが仲間思いの一面も。髪の毛は銅板でできているらしい。');
+  anchor.setAttribute('data-size', "large");
+  anchor.setAttribute('data-url', "https://concourse008.github.io/nisegaku/index.html");
+  anchor.innerText = 'Tweet #にせガクのブーメラン';
+  const script = document.createElement('script');
+  script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
+  tweetDivided.appendChild(script);
+  tweetDivided.appendChild(anchor);
+}

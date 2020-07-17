@@ -20,3 +20,9 @@ canvas {
     position: absolute;
     bottom: 0;
   }
+
+#tweet-area {
+  position: absolute;
+  margin-left: 20px;
+  margin-top: 382px;
+}
