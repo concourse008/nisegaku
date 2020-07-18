@@ -92,11 +92,11 @@ function step() {
   ctx.drawImage(images[3], srcs[3][1], srcs[3][2]);
   //スコア表示
   ctx.lineWidth = 0.5;
-  ctx.fillStyle = "#c30";
+  ctx.fillStyle = "#900";
   ctx.font = "bold 24px sans-serif";
-  ctx.fillText("score: " + point, 250, 395);
+  ctx.fillText(`point: ${point}`, 250, 395);
   ctx.strokeStyle = "#fff";
-  ctx.strokeText("score: " + point, 250, 395);
+  ctx.strokeText(`point: ${point}`, 250, 395);
   //時間表示
   ctx.lineWidth = 1;
   ctx.fillStyle = "#fff";
@@ -138,10 +138,55 @@ canvas[2].addEventListener('click', e => {
 let back = false;
 function role() {
   if (back) {
-    bumex = bumex + 0;
+    bumex = bumex - 0;
     bumey = bumey - 7;
     bumez = bumez + 32;
   } else {
+    bumex = bumex + 0;
+    bumey = bumey + 7;
+    bumez = bumez + 32;
+  }
+  if (bumey > 380) {
+    back = true;
+  } else if (bumey == 70) {
+    back = false;
+    bumez = 0;
+    clearInterval(moveing);
+    if (time <= 0) {
+    } else {
+      clickok = true;
+    }
+  }
+}
+function lrole() {
+  if (back) {
+    bumex = bumex + 3;
+    bumey = bumey - 7;
+    bumez = bumez + 32;
+  } else {
+    bumex = bumex - 3;
+    bumey = bumey + 7;
+    bumez = bumez + 32;
+  }
+  if (bumey > 380) {
+    back = true;
+  } else if (bumey == 70) {
+    back = false;
+    bumez = 0;
+    clearInterval(moveing);
+    if (time <= 0) {
+    } else {
+      clickok = true;
+    }
+  }
+}
+function rrole() {
+  if (back) {
+    bumex = bumex - 3;
+    bumey = bumey - 7;
+    bumez = bumez + 32;
+  } else {
+    bumex = bumex + 3;
     bumey = bumey + 7;
     bumez = bumez + 32;
   }
@@ -159,10 +204,22 @@ function role() {
 }
 let moveing = 0;
 function rolestart() {
-  function roleng() {
-    moveing = setInterval(role, 1000 / 30);
+  if(clickpoint.x < 130){
+    function lroleng() {
+      moveing = setInterval(lrole, 1000 / 30);
+    }
+    lroleng();
+  }else if (clickpoint.x <270){
+    function roleng() {
+      moveing = setInterval(role, 1000 / 30);
+    }
+    roleng();
+  }else{
+    function rroleng() {
+      moveing = setInterval(rrole, 1000 / 30);
+    }
+    rroleng();
   }
-  roleng();
 }
 
 //風船の移動
@@ -184,7 +241,7 @@ function bal0() {
     } else {
       baloon00[i] = baloon00[i] - 3;
     }
-    if ((215 - baloon00[i] - 17) ** 2 + (220 + 12 - bumey) ** 2 <= 1400) {//命中範囲
+    if ((bumex - baloon00[i] - 17) ** 2 + (220 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloon00[i] = 400;
       point++
     }
@@ -205,7 +262,7 @@ function bal1() {
     } else {
       baloon01[i] = baloon01[i] + 3;
     }
-    if ((215 - baloon01[i] - 17) ** 2 + (250 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloon01[i] - 17) ** 2 + (250 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloon01[i] = -30;
       point++
     }
@@ -226,7 +283,7 @@ function bal2() {
     } else {
       baloon02[i] = baloon02[i] - 2;
     }
-    if ((215 - baloon02[i] - 17) ** 2 + (280 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloon02[i] - 17) ** 2 + (280 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloon02[i] = 400;
       point++
     }
@@ -247,7 +304,7 @@ function bal3() {
     } else {
       baloon03[i] = baloon03[i] + 2;
     }
-    if ((215 - baloon03[i] - 17) ** 2 + (310 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloon03[i] - 17) ** 2 + (310 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloon03[i] = -30;
       point++
     }
@@ -268,7 +325,7 @@ function bal4() {
     } else {
       baloon04[i] = baloon04[i] - 2;
     }
-    if ((215 - baloon04[i] - 17) ** 2 + (340 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloon04[i] - 17) ** 2 + (340 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloon04[i] = 400;
       point++
     }
@@ -288,7 +345,7 @@ function baltuy() {
     } else {
       baloontuy[i] = baloontuy[i] - 2;
     }
-    if ((215 - baloontuy[i] - 17) ** 2 + (280 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloontuy[i] - 17) ** 2 + (280 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloontuy[i] = 400;
       time = time - 4;
       tuy++
@@ -304,7 +361,7 @@ function balnise() {
     /*if (baloon04[i] == 410){
 
     } else */if (baloonnise[i] == -30) {
-      if (Math.floor(Math.random() * 30) === 0 && lastgo >= 300) {
+      if (Math.floor(Math.random() * 20) === 0 && lastgo >= 300) {
         baloonnise[i] = baloonnise[i] + 10;
         lastgo = 0;
       }
@@ -313,7 +370,7 @@ function balnise() {
     } else {
       baloonnise[i] = baloonnise[i] + 2;
     }
-    if ((215 - baloonnise[i] - 17) ** 2 + (310 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloonnise[i] - 17) ** 2 + (310 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloonnise[i] = -30;
       time = time + 2;
     }
@@ -333,7 +390,7 @@ function balgold() {
     } else {
       baloongold[i] = baloongold[i] - 1;
     }
-    if ((215 - baloongold[i] - 17) ** 2 + (340 + 12 - bumey) ** 2 <= 1400) {
+    if ((bumex - baloongold[i] - 17) ** 2 + (340 + 12 - bumey) ** 2 <= 1400) {//命中範囲
       baloongold[i] = 400;
       point = point + 10;
     }
@@ -347,8 +404,7 @@ function times() {
     timecount = 0;
     if (time <= 0) {
       time = 0;
-      if (bumey == 70) {
-        bumey = 71;
+      if (bumey == 70 && !result) {
         end();
       }
     }
