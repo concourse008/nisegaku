@@ -433,7 +433,7 @@ function start() {
 function end() {
   clickok = false;
   result = true;
-  //tweet();
+  tweet();
 }
 function restart() {
   result = false;
@@ -455,6 +455,7 @@ function restart() {
   lastgold = 0;
   goldspace = 2000;
   tuy = 0;
+  tweetDivided.innerHTML = '';
 }
 
 //ツイートボタン
@@ -467,7 +468,7 @@ function tweet() {
   const hrefValue = 'https://twitter.com/intent/tweet?button_hashtag=' + encodeURIComponent('にせガクブーメラン') + '&ref_src=twsrc%5Etfw';
   anchor.setAttribute('herf', hrefValue);
   anchor.className = 'twitter-hashtag-button';
-  anchor.setAttribute('data-text', 'ブーメランを使い、' + point + 'ポイントの風船を撃墜した。悪い心を持つが仲間思いの一面も。髪の毛は銅板でできているらしい。');
+  anchor.setAttribute('data-text', 'ブーメランを使い、' + point + 'ポイントの風船を撃墜した。悪い心を持つが仲間思いの一面も。髪の毛は銅板でできているらしい。 #にせガクのブーメラン');
   anchor.setAttribute('data-size', "large");
   anchor.setAttribute('data-url', "https://concourse008.github.io/nisegaku/index.html");
   anchor.innerText = 'Tweet #にせガクのブーメラン';
